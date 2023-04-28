@@ -5,6 +5,7 @@ use winapi::{
         memoryapi::{VirtualAllocEx, WriteProcessMemory},
         processthreadsapi::CreateRemoteThread,
         synchapi::WaitForSingleObject,
+        winbase::INFINITE,
         winnt::{MEM_COMMIT, PAGE_EXECUTE_READ},
     },
 };
@@ -53,7 +54,7 @@ pub fn inject(h_proc: HANDLE, payload: &[u8]) -> i32 {
     };
     // Return 0 if CreateRemoteThread succeeds
     if !h_thread.is_null() {
-        unsafe { WaitForSingleObject(h_thread, 500) };
+        unsafe { WaitForSingleObject(h_thread, INFINITE) };
         return 0;
     }
     // Return -1 if CreateRemoteThread fails
