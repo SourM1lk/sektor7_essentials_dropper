@@ -7,7 +7,7 @@ build = "build.rs"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-winapi = { version = "0.3.9", features = ["memoryapi", "processthreadsapi", "synchapi", "wincrypt", "tlhelp32", "handleapi", "winbase", "winuser"] }
+winapi = { version = "0.3.9", features = ["memoryapi", "processthreadsapi", "synchapi", "wincrypt", "tlhelp32", "handleapi", "winbase", "winuser", "wincon"] }
 embed-resource = "2.1"
 
 [build-dependencies]

